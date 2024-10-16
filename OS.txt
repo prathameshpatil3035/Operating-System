@@ -1,0 +1,699 @@
+OS  (user -> OS -> HardWare)
+
+    1. Program Execution
+    2. File system management
+    3. Memory management
+    4. Resource sharing
+    5. Synchronization
+    6. Convienience
+
+
+Types of OS
+
+1. Batch OS
+    cpu contains (ALU- arthimetic logical unit) and control unit
+    the CPU executes one job at a time; once a job completes or enters I/O wait, the CPU is idle until the next job is ready for execution.
+    Idle CPU: The CPU remains idle during I/O operations as it only handles one job at a time.
+    Starvation of Job/Process: Jobs may suffer from starvation if long or high-priority jobs keep getting processed first.
+
+2. Multiprogramming OS
+
+    Multi-Programming OS: Runs multiple jobs in memory simultaneously, utilizing CPU while one job waits for I/O.
+
+    Batch OS vs. Multi-Programming OS:
+
+    Batch OS: Executes one job at a time; CPU is idle during I/O.
+    Multi-Programming OS: Switches to another job during I/O, reducing idle time. ( Advantage on batch os )
+
+    Types:
+    Time-Sharing OS: Shares CPU time among users/programs.
+    Real-Time OS: Immediate response for time-critical tasks.
+
+    Process Execution Scenario:
+    In multi-programming, when the first process is halted due to an I/O wait, the CPU switches to the second process. When the first process's I/O is completed, what happens next depends on the scheduling algorithm used by the OS:
+
+    Round-Robin/Preemptive: The CPU may switch back to the first process, even if the second hasn’t finished, depending on the time slice allocated.
+    Priority-Based/Shortest Job First: The OS may allow the second process to finish if it has higher priority or is shorter, before switching back to the first process.
+    First-Come, First-Served: The OS might continue running the second process until it completes, then resume the first process.
+
+3. multiprocessing OS
+    Supports multiple processors (CPUs) working together to execute multiple processes simultaneously
+
+    Key Features:
+    Parallel Processing: Multiple CPUs( or cores) execute different processes/tasks at the same time, increasing system efficiency.
+    Fault Tolerance: If one processor fails, others can take over.
+    
+    Types:
+    Symmetric Multiprocessing (SMP): All processors share the same memory and OS.
+    Asymmetric Multiprocessing (AMP): Each processor is assigned specific tasks, and only one runs the OS.
+
+    In a multiprocessing OS, one CPU can handle multiple processes using time-sharing (also known as multitasking). This allows the CPU to switch between processes, giving the illusion that it is running more than one process simultaneously.
+
+    However, whether a CPU runs 1 or more processes at a time depends on:
+
+    CPU Cores: A single-core CPU can only run one process at a time but uses multitasking to switch between processes quickly. A multi-core CPU can run multiple processes in parallel.
+
+    Time-Slicing (Scheduling): The OS scheduler decides how the CPU divides time between processes, so even a single CPU can appear to run multiple processes by switching between them rapidly.
+
+    Process State: If a process is waiting for I/O, the CPU can switch to another process to avoid being idle.
+
+    So, the actual parallelism depends on the number of CPU cores, but the OS manages time-slicing to handle multiple processes efficiently even on a single-core CPU.
+
+4. Program(Secondary Memory - e.g. hdd) Vs Process(Main memory)
+        process structure in main memory - [ 1.code 2.data 3.heap <-> 4.stack ]
+
+5. Segementation Fault  (access out of the process boundaries )
+        A segmentation fault (often called segfault) happens when a program tries to access memory that it’s not allowed to. This could be because:
+            It's accessing memory outside the range of what's allocated.
+            It's using an invalid pointer (e.g., a null pointer).
+        Essentially, the program is trying to read or write to a part of memory it shouldn't, and the operating system stops it for safety reasons.
+
+6. A PCB (Process Control Block) 
+        in an operating system is a data structure that contains all the information needed to manage a process. It includes:
+
+        Process ID: Unique identifier for each process.
+        Process State: Current state of the process (e.g., running, waiting, etc.).
+        Program Counter: Address of the next instruction to be executed.
+        CPU Registers: Values in the CPU registers for the process.
+        Memory Management Information: Details like page tables, base, and limit registers.
+        Priority: Process priority for scheduling.
+        I/O Status Information: Information related to I/O devices.
+        File List: List of files that the process has opened.
+        Protection Information: Data for access control and permissions.
+        These details help the OS manage processes, perform context switching, and ensure process execution and security.
+
+7. Context Switch 
+        In computing, registers, instructions, and the program counter work together to execute programs on a CPU:
+            Registers: These are small, fast storage locations within the CPU used to hold data that is currently being processed. They store values such as operands for arithmetic operations, memory addresses, and intermediate results.
+            Instructions: These are the commands that the CPU executes. Instructions are part of a program, telling the CPU what operations to perform, like arithmetic, data movement, or control flow.
+            Program Counter (PC): This is a special register that holds the memory address of the next instruction to be executed in the program. After an instruction is executed, the PC is updated to point to the next instruction.
+            Scheduler: Manages the order in which processes execute by allocating CPU time.
+                types:
+                    1. Long Term Schedular - (works in new <-> ready state) The long-term scheduler moves processes from the new state to the ready state based on their CPU and I/O time requirements, ensuring a balanced mix of CPU-bound(time) and I/O-bound(time) processes for optimal system performance.
+                    2. Short-term scheduler (CPU scheduler): (works in ready -> run state) Selects processes from the ready queue and allocates CPU for execution based on scheduling algorithms.
+                    3. Medium-term scheduler -  (process swapping scheduler): Swaps processes between main memory and suspended states (ready to suspended-ready, waiting to suspended-waiting) when there is not enough memory for high-priority processes; restores swapped processes after high-priority execution.
+
+            Preemption: Forcibly interrupts a running process to give the CPU to another process, typically for better multitasking.
+
+
+        Context switching is the process in an operating system where the CPU switches from executing one process to another. This allows for multitasking, where multiple processes can appear to run simultaneously, even though only one process can be actively executed by the CPU at a time.
+
+        Steps in Context Switching:
+            Saving the state: The current state of the running process (such as the program counter, register values, and memory mappings) is saved in the Process Control Block (PCB).
+            Loading the next process: The operating system loads the state (from the PCB) of the next process to be executed.
+            Resuming the next process: The CPU then resumes execution of the next process from where it left off.
+
+8. Process State Transition 
+        Process State Transition in an operating system describes how a process moves through different stages of its life cycle. The common states include:
+            New → The program is loaded into main memory from secondary storage.
+            Ready → The Process Control Block (PCB) is created, and the process is ready for execution.
+            Running → The CPU is actively executing the process.
+            Waiting → The process is waiting for an I/O operation to complete.
+            Terminated → The process has completed execution.
+
+            +--------------------+
+            |       New          | (created if its in secondary memory, if moved in main memory its new)
+            +--------------------+
+                  |
+                  v
+        +--------------------+
+        |       Ready        | (PCB is ready for an process)
+        +--------------------+
+            |              ^
+            v (execution)  |
+  +----------------+       |
+  |    Running     |----+  |
+  +----------------+    |  |
+         |              |  |  
+         |              v  |
+         |          +----------------------+   
+         |          |      Waiting         | (I/O operations)
+         |          +----------------------+
+         |
+         v
+  +------------------+
+  |    Terminated    |
+  +------------------+
+
+9. The degree of multiprogramming (DOM):
+    It is the number of processes in the ready state. The Long-term scheduler (LTS) controls DOM by determining how many processes enter the system, while the Short-term scheduler (STS) has less direct control over DOM. Medium-term scheduling (MTS) reduces DOM by swapping processes in and out of memory.
+
+10. Process Scheduling Terms:
+        Arrival Time: The time when a process enters the ready queue.
+        Waiting Time: The total time a process spends in the ready queue before getting CPU execution (time between ready and running).
+        Burst Time: The time required for a process to execute on the CPU.
+        Turnaround Time: The total time from process arrival to its completion, including execution and waiting time (completion time - arrival time).
+
+11. CPU scheduling algorithms:
+    1. First Come First Serve (FCFS): Non Preemptive
+
+        Pno  | AT | BT | CT | TAT | WT    Pno = process no
+        ------------------------------    AT  = arrival time
+          1  |  0 |  3 |  3 |  3  |  0    BT  = burst time
+          2  |  1 |  4 |  7 |  6  |  2    CT  = completion time
+          3  |  2 |  2 |  9 |  7  |  5    TAT = turn around time
+          4  |  3 |  1 | 10 |  7  |  6    WT  = waiting time
+
+        Gantt Chart
+        ------------------------------
+        P1  | P2  | P3  | P4 |
+        ------------------------------
+        0   3     7     9    10
+
+
+        TAT = CT - AT
+        WT  = TAT - BT
+        CT (Traverse Right to Left)
+    
+    2. Shortest Job First (SJF): Non Preemptive
+
+
+        Pno  | AT | BT | CT | TAT | WT
+        ------------------------------
+          1  |  0 |  3 |  3 |  3  |  0
+          2  |  1 |  4 | 10 |  9  |  5
+          3  |  2 |  2 |  6 |  4  |  2
+          4  |  3 |  1 |  4 |  1  |  0
+
+        Gantt Chart
+        ------------------------------
+        P1  | P4  | P3  | P2  |
+        ------------------------------
+        0   3     4     6     10
+
+    3. Round Robin
+
+        Quantum Time (QT) = Quantum time in Round Robin scheduling refers to the fixed time slice allocated to each process for execution before it is preempted and moved back to the ready queue, ensuring fair CPU time distribution among all processes.
+
+        TQ = 2
+
+        Pno  | AT | BT | CT | TAT | WT
+        ------------------------------
+          1  |  0 |  3 |  7 |  7  |  4
+          2  |  1 |  4 | 10 |  9  |  5
+          3  |  2 |  2 |  6 |  4  |  2
+          4  |  3 |  1 |  8 |  5  |  4
+
+        Gantt Chart
+        -------------------------------------------
+        P1  | P2  | P3  | P1  | P4  | P2  |
+        -------------------------------------------
+        0   2     4     6     7     8     10
+
+12. Critical section and Race condition:
+        Critical Section: A part of a program where shared resources are accessed, such as a shared variable count. Only one process should be in its critical section at any time to avoid incorrect behavior.
+        Race Condition: Occurs when two or more processes execute concurrently and try to modify the shared variable at the same time, leading to inconsistent results.
+
+        count = 10 (critical section or shared memory)
+        Process P1 (Increment): 1) Read: R1 = count 2) Increment: R1 = R1 + 1 3) Write: count = R1
+        Process P2 (Decrement): 1) Read: R3 = count 2) Decrement: R3 = R3 - 1 3) Write: count = R3
+
+        Scenario 1:
+        P1: 1, 2, 3 (R1 = 11) | P2: 1, 2, 3 (R2 = 10) => count = 10
+
+        Scenario 2:
+        P1: 1, 2 (R1 = 11) | P2: 1, 2, 3 (R2 = 9) | P1: 3 => count = 11
+
+        Scenario 3:
+        P1: 1, 2 (R1 = 11) | P2: 1, 2 (R2 = 9) | P1: 3 | P2: 3 => count = 9
+
+13. Synchronization Conditions:
+        Mutual Exclusion: Ensures that only one process can enter its critical section (where shared resources are accessed) at a time. This prevents race conditions, as no two processes can access or modify shared data simultaneously.
+        Progress: ( If process P1 is not interested in entering the critical section, it should not block or prevent process P2 from entering the critical section.) Guarantees that if no process is in its critical section and some processes wish to enter, one of the waiting processes will eventually be allowed to enter. This ensures that the system doesn't become idle unnecessarily, and work continues.
+        Bounded Waiting: (If process P1 wants to enter the critical section multiple times, it should not indefinitely prevent process P2 from entering. P1 should ensure that P2 waits for a bounded amount of time before getting its turn.) Ensures that every process has a bound (limit) on the number of times other processes are allowed to enter their critical sections before it can enter its own. This prevents starvation, ensuring that every process eventually gets its turn.
+        Architectural Neutrality / Portability: Implies that synchronization solutions (like algorithms or mechanisms) should work across different hardware architectures without needing major changes. The implementation should be portable and not tied to a specific hardware platform.
+
+14. Synchronization Mechanisms:
+        1. Busy Waiting (Spinlock): A process continuously checks if it can enter the critical section, waiting until another process finishes using it. This consumes CPU cycles while waiting.
+            1. Lock Variable
+            2. Test and Set LOCK (TSL)
+            3. Turn Variable
+            4. Peterson method
+        2. Without Busy Waiting: A process goes into a sleep state until another process finishes using the critical section. Once the critical section is available, the sleeping process is woken up, saving CPU utilization.
+            1. Sleep and wake up.
+
+    1. Lock Variable:
+        Software Mechanism (user mode)
+        works for more than 2 processes
+        mutual exclusion not garented
+       +----------------------+
+       | 1. while (LOCK != 0);|
+       | 2. LOCK = 1;         |
+       +----------------------+
+        CS (critical section)
+        +------------+
+        |3. LOCK = 0;|
+        +------------+                                                          # Idle case                                                     # Mutual Exclusion not follows
+
+        Steps :                                                                  Time  |  P1                      | P2                          Time   | P1                      | P2
+            1) Load LOCK, R0                                                    ------------------------------------------------                ------------------------------------------------
+            2) CMP R0, #0             (CMP = compare)                           T0     | while (LOCK != 0)        |                             T0     | Load LOCK, R0            | Load LOCK, R0
+            3) JNZ 1)                 (JNZ = jump not equal to 0)               T1     | LOCK = 1 (enter CS)      | while (LOCK != 0)           T1     | CMP R0, #0 (LOCK = 0)    | CMP R0, #0 (LOCK = 0)
+            4) Store #1, LOCK                                                   T2     | Critical Section         |                             T2     | Store #1 in LOCK (LOCK=1)| Store #1 in LOCK (LOCK=1)
+            .                                                                   T3     | LOCK = 0 (exit CS)       | LOCK = 1 (enter CS)         T3     | Enter Critical Section   | Enter Critical Section
+            .                                                                   T4     |                          | Critical Section            T4     | Critical Section         | Critical Section
+            critical section                                                    T5     |                          | LOCK = 0 (exit CS)          T5     | LOCK = 0 (exit CS)       | LOCK = 0 (exit CS)
+
+    2. Test and Set LOCK (TSL):
+            mutual exclusion and progress are garented, but Bounded Waiting and Architectural Neutrality not garented
+
+           +-------------------+                                                        Time   | P1                       | P2
+           | 1) Load LOCK, R0  |   --->   TSL LOCK, R0  (atomic instruction)            ------------------------------------------------
+           | 4) Store #1, LOCK |                                                        T0     | TSL LOCK, R0             | 
+           +-------------------+                                                        T1     | LOCK = 1 (enter CS)      | TSL LOCK, R0 (blocked)
+            2) CMP R0, #0             (CMP = compare)                                   T2     | Critical Section         | 
+            3) JNZ 1)                 (JNZ = jump not equal to 0)                       T3     | LOCK = 0 (exit CS)       | LOCK = 1 (enter CS)
+            .                                                                           T4     |                          | Critical Section
+            .                                                                           T5     |                          | LOCK = 0 (exit CS)
+            critical section                                            
+    
+    3. Turn Variable:
+            Software mechanism (user mode)
+            works for only 2 process
+            Mutual exclusion garented but Progress not garented.
+                            Turn = 0
+                P0              |       P1
+            while(turn != 0);   |   while(turn != 1);
+            critical section    |   critical section
+            turn = 1            |   turn = 0
+            :                   |   :
+            :                   |   :
+    
+    4. Peterson method
+            works for only 2 process                                            Time   | P0 (turn = 0)                 | P1 (turn = 1)
+            process         0   |   1                                           -----------------------------------------------------
+            interested      F   |   F                                           T0     | interested[0] = true          | Waiting for turn
+            turn            0   |   1                                           T1     | turn = 1 (give chance to P1)  | Waiting for turn
+            other           1   |   0                                           T2     | While loop: P0 checks P1's    | interested[1] = true
+                                                                                       | interest and waits (P1's turn)| turn = 1 (remains P1's turn)
+            Entry Section(process){                                             T3     | Waiting for turn              | Enter Critical Section
+                1. int other;                                                   T4     | Waiting for turn              | Critical Section
+                2. other = 1 - process;                                         T5     | Waiting for turn              | interested[1] = false (exit CS)
+                3. interested[process] = true;                                  T6     | Enter Critical Section        | Waiting for P0
+                4. turn = process                                               T7     | Critical Section              | Waiting for P0
+                5. while(interested[other] = true && turn = process);           T8     | interested[0] = false (exit CS)| Waiting for turn
+            }
+
+            critical section
+
+            exit section(process){
+                6. interested[process] = false;
+            }
+    
+    1. Sleep and Wake up:
+
+        Buffer[] of size N
+        and count for an item in b
+
+        Producer(){                                 Consumer(){    
+            int item;                                   int item;
+            while (true){                               while(true){
+                item = produce_item();                      if(count == 0)
+                if(count == N);                                 sleep();
+                    sleep();                                item = remove_item();
+                insert_item(item);                          count--;
+                count++;                                    if(count == N-1)
+                if(count==1)                                    wake_up(Producer);
+                    wake_up(Consumer);                      consume_item(item)
+            }                                           }
+        }                                           }
+
+15. Deadlock
+        A deadlock is a situation in an operating system where two or more processes are unable to proceed because each is waiting for the other to release resources.
+
+            1. Mutual Exclusion: Only one process can hold a resource at a time.
+            2. Hold and Wait: A process holding at least one resource is waiting for additional resources that are held by other processes.
+            3. No Preemption: Resources cannot be forcibly taken from a process; they must be released voluntarily.
+            4. Circular Wait: A closed chain of processes exists where each process holds a resource the next one needs.
+
+                +----------+         +----------+        
+                |Process 1 | ------> |Resource A|           Process 1 holds Resource A and is waiting for Resource B.
+                +----------+         +----------+           Process 2 holds Resource B and is waiting for Resource C.
+                   ^                      |                 Process 3 holds Resource C and is waiting for Resource A.
+                   |                      v
+                +----------+         +----------+        
+                |Resource C| <------ |Process 3 |
+                +----------+         +----------+
+                    ^                      |
+                    |                      v
+                +----------+         +----------+        
+                |Process 2 | <------ |Resource B|
+                +----------+         +----------+
+
+        Deadlock Avoidance: Banker's Algorithm
+            The Banker's Algorithm is a resource allocation and deadlock avoidance algorithm that tests for the safety of the system before allocating resources to processes. It operates by ensuring that resources are only allocated in such a way that the system remains in a safe state.
+
+            1. Safe state:
+
+                (Allocated)             (Requested)                                             P1 (fullfillment first according resource available)    P0                  P2
+                    R0  R1  R2              R0  R1  R2                      R0  R1  R2          2   0   1                                               1   2   1           2   2   1
+                P0  1   2   1           P0  1   0   3           Total       5   5   5       +   0   1   2                                           +   2   1   3       +   3   3   4
+                P1  2   0   1           P1  0   1   2           Allocated   5   4   3           ---------                                               ---------           ---------
+                P2  2   2   1           P2  1   2   0           Available   0   1   2           2   1   3                                               3   3   4           5   5   5
+            
+            2. Usafe state:
+
+                (Allocated)             (Requested)                                             
+                    R0  R1  R2              R0  R1  R2                      R0  R1  R2          
+                P0  1   2   2           P0  1   0   2           Total       5   5   5       
+                P1  2   0   1           P1  0   1   2           Allocated   5   4   4         
+                P2  2   2   1           P2  1   2   0           Available   0   1   2       
+
+16. Relocation
+        Relocation refers to the process of adjusting program addresses at runtime to account for the program's location in memory. Since a program may not always load into the same physical memory location, the operating system needs to translate logical addresses (used in the code) into physical addresses (actual locations in memory).
+
+        Why Relocation is Needed:
+            Dynamic Loading: Programs do not always load into the same memory address.
+            Memory Management: To efficiently use memory and avoid fragmentation, processes are relocated in different areas of memory.
+            Swapping: Processes are moved in and out of memory during execution.
+
+                Secondary Memory                                    Main Memory
+        +----------------------------------+              0 +-------------------------+
+        |1  (program instruction address)  |  ->            | Offset added at runtime |
+        |2                                 |  ->            | Relocation done by MMU  |
+        |3                                 |            10k +-------------------------+
+        |4   jump [1]                      |                |1                        |
+        |5                                 |                |2                        |
+        |6                                 |                |3                        |
+        |7                                 |                |4 Jump [10k + 1]         |
+        |8                                 |----->          |5                        |
+        +----------------------------------+                |6                        |
+                                                            |7                        |
+             Relocatable address                            |8                        |
+                                                            +-------------------------+
+                                                            |                         |
+                                                            |                         |
+                                                            +-------------------------+
+
+                                                                Absolute address
+
+17. Contiguous Memory Allocation:
+        
+        Fragmentation
+            1. Internal Fragmentation: Occurs in fixed partitioning. Internal fragmentation happens when a partition is larger than the process's memory requirement, leaving unused space within the allocated memory block.
+            2. External Fragmentation: Occurs in variable partitioning. External fragmentation happens when free memory exists but is not contiguous, preventing processes that require large contiguous memory blocks from being allocated.
+        
+        There are two main types of partitioning in contiguous memory allocation:
+            1. Fixed Partitioning (Internal and External Fragmentation)
+                    +-----------+---------+---------------+---------------+
+                    | Partition |   Size  |   Process      | Unused Space |
+                    +-----------+---------+---------------+---------------+
+                    |    P1     |  4 MB   | P1 (2 MB)      |   2 MB       |
+                    +-----------+---------+---------------+---------------+
+                    |    P2     |  4 MB   | P2 (4 MB)      |   0 MB       |
+                    +-----------+---------+---------------+---------------+
+                    |    P3     |  4 MB   | P3 (1 MB)      |   3 MB       |
+                    +-----------+---------+---------------+---------------+
+                    |    P4     |  4 MB   | P4 (3 MB)      |   1 MB       |
+                    +-----------+---------+---------------+---------------+
+
+            2. Variable Partitioning (External Fragmentation)
+                    +-----------+---------+---------------+---------------+
+                    | Partition |   Size  |   Process      | Free Space   |
+                    +-----------+---------+---------------+---------------+
+                    |    P1     |  2 MB   | P1             |   0 MB       |
+                    +-----------+---------+---------------+---------------+
+                    |    P2     |  4 MB   | P2             |   0 MB       |
+                    +-----------+---------+---------------+---------------+
+                    |    P3     |  6 MB   | P3             |   0 MB       |
+                    +-----------+---------+---------------+---------------+
+                    |    P4     |  3 MB   | P4             |   0 MB       |
+                    +-----------+---------+---------------+---------------+
+
+            Compaction Method : reduces CPU utilization
+
+                Before Compaction:  Free space is fragmented across multiple partitions
+                    
+                    +-----------+---------+---------------+---------------+
+                    | Partition |   Size  |   Process      | Free Space   |
+                    +-----------+---------+---------------+---------------+
+                    |    P1     |  2 MB   | P1             |   0 MB       |
+                    +-----------+---------+---------------+---------------+
+                    |           |  3 MB   | Free           |   3 MB       |
+                    +-----------+---------+---------------+---------------+
+                    |    P2     |  4 MB   | P2             |   0 MB       |
+                    +-----------+---------+---------------+---------------+
+                    |           |  2 MB   | Free           |   2 MB       |
+                    +-----------+---------+---------------+---------------+
+                    |    P3     |  6 MB   | P3             |   0 MB       |
+                    +-----------+---------+---------------+---------------+
+                    |    P4     |  3 MB   | P4             |   0 MB       |
+                    +-----------+---------+---------------+---------------+
+
+                After compaction:   Free space is consolidated into a larger contiguous block after moving processes together, reducing external fragmentation.
+
+                    +-----------+---------+---------------+---------------+
+                    | Partition |   Size  |   Process      | Free Space   |
+                    +-----------+---------+---------------+---------------+
+                    |    P1     |  2 MB   | P1             |   0 MB       |
+                    +-----------+---------+---------------+---------------+
+                    |    P2     |  4 MB   | P2             |   0 MB       |
+                    +-----------+---------+---------------+---------------+
+                    |    P3     |  6 MB   | P3             |   0 MB       |
+                    +-----------+---------+---------------+---------------+
+                    |    P4     |  3 MB   | P4             |   0 MB       |
+                    +-----------+---------+---------------+---------------+
+                    |           |  5 MB   | Free           |   5 MB       |
+                    +-----------+---------+---------------+---------------+
+
+            To avoid external fragmentation, non-contiguous memory allocation techniques like Paging and Segmentation are used, where memory is divided into fixed-size pages or variable-sized segments, eliminating the need for large contiguous memory blocks.
+            
+            Allocation and Deallocation of Memory into Processes and Holes
+                In dynamic memory allocation, processes and holes (free memory blocks) alternate as memory is allocated and deallocated. Let's look at an example. When a process is deallocated, it leaves behind a hole, or a free block of memory. These holes can be used by other processes, but managing them properly is crucial to avoid fragmentation.
+                
+            Initial State (Full Memory Available)
+            +-----------+---------+
+            | Free (10 MB)        |
+            +-----------+---------+
+
+            After Allocating 3 Processes (P1, P2, P3)
+            +-----------+---------+---------------+---------------+
+            |  P1       |  3 MB   | Free          |   1 MB        |
+            +-----------+---------+---------------+---------------+
+            |  P2       |  4 MB   |               |               |
+            +-----------+---------+---------------+---------------+
+            |  P3       |  2 MB   |               |               |
+            +-----------+---------+---------------+---------------+
+
+            After Allocating P4 (Fills the Hole)
+            +-----------+---------+---------------+---------------+
+            |  P1       |  3 MB   | P4            |   4 MB        |
+            +-----------+---------+---------------+---------------+
+            |  P4       |  4 MB   |               |               |
+            +-----------+---------+---------------+---------------+
+            |  P3       |  2 MB   |               |               |
+            +-----------+---------+---------------+---------------+
+
+            Holes are created when processes are deallocated. In this case, when P2 is deallocated, it leaves behind a hole of 4 MB.
+            Holes are filled when new processes are allocated (in this case, P4).
+        
+        Bitmap Allocation
+            In bitmap allocation, memory is divided into fixed-size allocation units. A bitmap is used to track whether each unit is free or allocated.
+
+            1 bit = Allocated (used by a process)
+            0 bit = Free (available for allocation)
+        
+        +-----------+---------+-------------------+---------------+
+        | Partition |   Size  |   Process          | Free Space   |
+        +-----------+---------+-------------------+---------------+
+        |    P1     |   3 MB  |   [1][1][1]        |              |
+        +-----------+---------+-------------------+---------------+
+        |    P2     |   4 MB  |   [1][1][1][1]     |              |
+        +-----------+---------+-------------------+---------------+
+        |    P3     |   2 MB  |   [1][1]           |              |
+        +-----------+---------+-------------------+---------------+
+        |   Free    |   1 MB  |                   |   [0]         |
+        +-----------+---------+-------------------+---------------+
+
+        Bitmap: [1, 1, 1, 1, 1, 1, 1, 1, 0]
+
+18. Memory Management using Linked list:
+        In OS memory management using linked lists, each node represents either a process or a hole, along with the start and end memory addresses. Here's an example of a single linked list showing memory blocks with a process (P) and a hole (H):
+
+        Single Linked List 
+        +----+--------+--------+  -->  +----+--------+--------+  -->  +----+--------+--------+
+        | P  |   10   |   17   |       | H  |   18   |   25   |       | P  |   26   |   35   |
+        +----+--------+--------+       +----+--------+--------+       +----+--------+--------+
+
+        Double Linked List
+        <---+----+--------+--------+--->  <----+----+--------+--------+--->  <---+----+--------+--------+--->
+            | P  |   10   |   17   |           | H  |   18   |   25   |          | P  |   26   |   35   |
+            +----+--------+--------+           +----+--------+--------+          +----+--------+--------+
+
+    In OS linked list memory management, the methods for allocating memory are:
+
+        1. First Fit: The system scans the linked list and allocates the first available hole that is large enough for the process.
+                Advantage: Fast as it stops at the first sufficient hole.
+                Disadvantage: Can cause fragmentation at the start of memory.
+
+        2. Next Fit: Similar to First Fit, but it continues searching from the last allocated position.
+                Advantage: Reduces the likelihood of repeatedly searching the same areas.
+                Disadvantage: Can leave small unused fragments.
+
+        3. Best Fit: The system scans the entire list and selects the smallest hole that fits the process.
+                Advantage: Minimizes wasted space in holes.
+                Disadvantage: Can lead to many small unusable holes (external fragmentation).
+
+        4. Worst Fit: Allocates the largest available hole.
+                Advantage: Leaves larger holes for future processes.
+                Disadvantage: Might waste large amounts of memory.
+
+        +----+--------+ -> +----+--------+ -> +----+--------+ -> +----+--------+ -> +----+--------+ -> +----+--------+ -> +----+--------+ -> +----+--------+ -> +----+--------+ -> +----+--------+ 
+        | H  |   30   |    | P  |   50   |    | H  |   40   |    | P  |   60   |    | H  |   20   |    | P  |   70   |    | H  |   25   |    | P  |   80   |    | H  |   35   |    | P  |   45   |  
+        +----+--------+    +----+--------+    +----+--------+    +----+--------+    +----+--------+    +----+--------+    +----+--------+    +----+--------+    +----+--------+    +----+--------+ 
+
+19. Pagination
+        Pages: Fixed-size blocks of the process in logical memory.
+        Frames: Fixed-size blocks in physical memory.
+        Page size = Frame size
+
+        +-----+     +-----+     +-----+     +-----+
+        | P1  |     | P2  |     | P3  |     | P4  |
+        | P1  |     | P2  |     | P3  |     | P4  |
+        | P1  |     +-----+     | P3  |     | P4  |
+        +-----+       P2        | P3  |     +-----+
+          P1                    | P3  |       P4
+                                +-----+
+                                  P3
+
+        Main Memory:
+
+           +-----+             +-----+                     +-----+
+       F1  | P1  | Page 1      | P1  | Page 1              | P1  | Page 1
+       F2  | P1  | Page 2      | P1  | Page 2              | P1  | Page 2
+       F3  | P1  | Page 3      | P1  | Page 3              | P1  | Page 3
+           +-----+             +-----+                     +-----+
+       F4  | P2  | Page 4      | H   | Hole (2 pages)      | P5  | Page 4
+       F5  | P2  | Page 5      | H   |                     | P5  | Page 5
+           +-----+             +-----+                     +-----+
+       F6  | P4  | Page 6      | P4  | Page 6              | P4  | Page 6
+       F7  | P4  | Page 7      | P4  | Page 7              | P4  | Page 7
+       F8  | P4  | Page 8      | P4  | Page 8              | P4  | Page 8
+       F9  | P4  | Page 9      | P4  | Page 9              | P4  | Page 9
+       F10 | P4  | Page 10     | P4  | Page 10             | P4  | Page 10
+           +-----+             +-----+                     +-----+
+       F11 | P3  | Page 11     | H   | Hole (3 pages)      | P5  | Page 11
+       F12 | P3  | Page 12     | H   |                     | P5  | Page 12
+       F13 | P3  | Page 13     | H   |                     | P5  | Page 13
+           +-----+             +-----+                     +-----+
+
+    Process P1 (3 pages), P2 (2 pages), and P4 (5 pages) are allocated.
+
+    Initial Allocation for P1 (3 pages)
+
+19. Memory Management Unit (MMU) Explanation:
+        The Memory Management Unit (MMU) is a hardware component responsible for translating logical addresses into physical addresses. It helps manage virtual memory and ensures that processes can access memory efficiently and securely.
+        Logical Address: Generated by the CPU and contains the page number and offset. This address is virtual and needs translation into a physical address.
+        Physical Address: Corresponds to the actual location in main memory. It contains the frame number and offset, after translating from the logical address.
+        Logical and Physical Address Breakdown:
+        Logical Address = Page Number + Offset
+        Physical Address = Frame Number + Offset
+        The page number maps to a frame number in physical memory, and the offset remains the same in both logical and physical addresses.
+
+        +---------+---------+       +---------+---------+
+        | Page No | Offset  |       | Frame No| Offset  |
+        +---------+---------+       +---------+---------+
+        |  P1-0   |   12    |       |   3     |   12    |
+        +---------+---------+       +---------+---------+
+        |  P3-2   |   34    |       |   4     |   34    |
+        +---------+---------+       +---------+---------+
+        |  P4-5   |   45    |       |   5     |   45    |
+        +---------+---------+       +---------+---------+  
+
+20. Page Table:
+        The page table is a data structure used in virtual memory systems to map logical (virtual) addresses to physical addresses. Each process has its own page table, which contains page table entries (PTEs) that store the mapping from virtual pages to physical frames.
+
+        Page Table Entries (PTEs):
+            A Page Table Entry includes information such as the frame number in physical memory, status bits (like whether the page is in memory), and permissions (read/write access).
+
+        Page Table Base Register (PTBR):
+            The Page Table Base Register (PTBR) holds the starting address of the page table in memory. When the CPU generates a logical address, it uses the PTBR to locate the corresponding page table for the current process.
+
+            
+           +---------+               +-----------------+           +-----------------+
+           |  CPU    |               | Page Table Base |           |  Main Memory    |
+           | Logical | --(LA)------> | Register (PTBR) |           +-----------------+
+           | Address |               +-----------------+           |     OS          |
+           +---------+                              |          +---+-----------------+
+                                                    |          | P1(1) - Frame 3     |
+          +----------------------------------+      |          +---------------------+
+          |             Page Table           |      |          | P1(2) - Frame 4     | <------+
+          +----------------------------------+      |          +---------------------+        |
+          |  Page No.  |  Frame No.          |      |          | P1(Page Table)      |        |
+          +------------+---------------------+      +--------> | Frame 7 (PTBR)      |----+   |
+          |     0      |      3              |                 +---------------------+    |   |
+          |     1      |      4              | <------------------------------------------+   |
+          |     2      |      7 (PTBR)       | ------------(PA)-------------------------------+                                      
+          +----------------------------------+          
+
+            Logical address = P1(page - 2 & offset - 5)
+            Page table base register = page table -> frame 7
+            page table = logical address -> physical address (Frame - 4 & offset - 5)
+
+    Multilevel Paging:
+        Multilevel Paging in OS is a memory management scheme that avoids the limitations of a single-level page table, especially when the virtual address space is large. Multilevel paging uses multiple levels of page tables, where the first-level page table points to second-level page tables, and so on.
+
+        +---------+               +-----------------+           +-------------------------------------------------------+
+        |  CPU    |               | Page Table Base |           | Main Memory                                           |
+        | Logical | --(LA)------> | Register (PTBR) |           +-------------------------------------------------------+
+        | Address |               +-----------------+           |     OS                                                |
+        +---------+                              |              +-------------------------------------------------------+
+            +------------------------------------+              | Frame 3 - P1 (Page 0)                                 |
+            |     +----------------------------------+          +-------------------------------------------------------+
+            |     |        First-Level Page Table    |          | Frame 4 - P1 (Page 1)                                 |
+            |     +----------------------------------+  (PA)    +-------------------------------------------------------+
+            |     |  Page No.  |  Second-Level PT    |------->  | Frame 5 - P1 (Page 2)                                 | 
+            |     +------------+---------------------+          +-------------------------------------------------------+
+            |     |     0      |      Frame 9        |          | Frame 6 - P1 (Page 3)                                 |           
+            |     |     1      |      Frame 10       |          +-------------------------------------------------------+
+            |     |     2      |      Frame 11       |          | Frame 7 - P1 (Page 4)                                 |
+            |     +----------------------------------+          +-------------------------------------------------------+
+            |                            ^                      | Frame 8 - P1 (Page 5)                                 |  
+            |                            |                      +-------------------------------------------------------+    
+            |                            |                      | Frame 9 Second-Level Page Table (Page 1)              |  
+            |     +----------------------------------+          +-------------------------------------------------------+
+            +---> |       Second-Level Page Table    |          | Frame 10 Second-Level Page Table (Page 2)             |
+                  +----------------------------------+          +-------------------------------------------------------+
+                  |  Page No.  |  Frame No.          |          | Frame 11 Second-Level Page Table (Page 3)             |
+                  +------------+---------------------+          +-------------------------------------------------------+
+          Page 0  |     0      |      3              |          | Frame 12 First-Level Page Table (PTBR)                |
+                  |     1      |      4              |          +-------------------------------------------------------+
+                  +----------------------------------+          |                                                       |
+          Page 1  |     2      |      5              |          +-------------------------------------------------------+                                                       
+                  |     3      |      6              |  
+                  +----------------------------------+        
+          Page 2  |     4      |      7              |
+                  |     5      |      8              |                                                                
+                  +----------------------------------+          
+
+21. Translation Lookaside Buffer (TLB):
+        used for frequently refered page
+        TLB (Translation Lookaside Buffer) is a small, fast cache in the memory management unit (MMU) that stores a subset of the page table entries to speed up the translation from logical to physical addresses. It holds the most frequently referenced pages, reducing the number of times the page table has to be consulted.
+        TLB structure: 1.Tag - consist of page no. and process id   2.Key - consist of frame no related to page no in main memory
+
+        TLB hit - A TLB hit occurs when the page number is found in the TLB, allowing direct access to the corresponding frame in memory.
+        TLB miss - A TLB miss occurs when the page number is not in the TLB, requiring a lookup in the page table.
+
+                    +------------------+
+                    |    CPU           | 
+                    | Logical Address  |
+                    +------------------+
+                             |
+                             v
+                  +---------------------------+
+                  |  Translation Lookaside    |
+                  |         Buffer (TLB)      |
+                  +---------------------------+
+                           |         |         
+            +---------+    |    +----v----+      +-----------------+
+            |   Hit   |<---+    |   Miss  |----> |Page Table Lookup|
+            +---------+         +---------+      +-----------------+
+               |                                    |
+               |                                    v
+               v                                +------------+
+          Physical Frame                        |   Main     |
+          (Accessed directly)                   |  Memory    |
+                |                               +------------+
+                |                                   ^
+                |                                   |
+                +-----------------------------------+
