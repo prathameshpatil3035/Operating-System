@@ -1,5 +1,173 @@
 OS  (user -> OS -> HardWare)
 
+    two modes of operations in which a program can execute : 
+    1. user mode 
+        if the program is executing in a user mode then that program does not have direct access to the memory, to the hardware and such resources.
+        when a program executing in a kernal mode and if that program happens to crash during its execution then the entire system would not crash.
+
+    2. kernal mode (privileged mode)
+        if the program is executing in a user mode then that program does have direct access to the memory, to the hardware and such resources.
+        when a program executing in a kernal mode and if that program happens to crash during its execution then the entire system would crash, so that is the problem of kernal mode.
+
+    In an operating system, transitioning from user mode to kernel mode occurs when a process needs to access privileged resources such as hardware (e.g., memory, monitor, hard disk) that are protected from direct user access. This transition typically happens through a system call.
+    The process of switching between user mode and kernel mode is called a context switch or mode switch
+
+    System call :
+        System call provide an interface to the service made available by an operating system
+        System call is a programmatic way in which a computer program requests a service  from the kernal of the operating system, these calls are generally available as routines written n C and C++
+    
+    Structure of Operating System:
+        MSDOD structure (Microsoft disk operating system):
+            msdos written on the intel 8088 and this intel 8088 does not provide dual mode or any hardware protection.
+            It looks like layered structure but all the layers has direct access to hardware. so if program using hardware fails then the entire system will crash. 
+
+            +----------------------------------------------------------+
+            | Application programs                                     |
+            +----------------------------------------------------------+
+                                                                    |
+            +---------------------------------------------------+   |
+            | Resident system programs                          |   |
+            +---------------------------------------------------+   |
+                                                            |       |
+            +-------------------------------------------+   |       |
+            | Device drivers                            |   |       |
+            +-------------------------------------------+   |       |
+                                                |           |       |
+                                                v           v       v
+            +----------------------------------------------------------+
+            | ROM BIOS device drivers (Hardware)                       |
+            +----------------------------------------------------------+
+
+        Monolithic Structure:
+            this structure was followed by earlier unix operating system.
+            the problem with this is that there are too many functions packed into one level (kernal level) and for this reason it is called as monolithic structure and this makes its implementation and maintenance very difficult. 
+
+            +--------------------------------------------------------------------+
+            |                           (The Users)                              |
+            +--------------------------------------------------------------------+
+            |                       Shell and Commands                           |
+            |                   Compillers and Interrupts                        |
+            |                        System Libraries                            |
+            +--------------------------------------------------------------------+ --+
+            |               System-Call interface to the Kernal                  |   |
+            +-----------------------+------------------------+-------------------+   |
+            | signal, terminal      | file system           | cpu scheduling     |   |
+            | handling              | swapping block I/O    | page replacement   |   |--> Kernal
+            | character I/O system  | system                | demand paging      |   |
+            | terminal drivers      | disk and tape drivers | virtual memory     |   |
+            +-----------------------+-----------------------+--------------------+   |
+            |               Kernal interface to the Hardware                     |   |
+            +--------------------------------------------------------------------+ --+
+            | termial controllers   | device controllers    | memory controllers |   
+            | terminals             | disk and tapes        | physical memory    |
+            +-----------------------+-----------------------+--------------------+
+        layered structure:
+            Operating system divided into number of layers. lower most level or at level 0 there is hardware layer and the topmost layer is user interface
+            This is easy to implement, debug and maintain also. The major advantage is that the hardware is protected from the layers above, unlike the simple structures the user interface can not directly access the hardware.
+            Disadvantege is that to design layer structure as it is difficult to deside which layer should be top on a perticular layer and vice versa because only top layer can use below layer. This structure is not efficient than the other structures because one layer want to use the services provided by the layer below itthe request has to go down below each layer one by one and by the time service is actually provided. It may be late or it may not be very fast.
+
+            +-------------------------------------------------------------------+
+            |                   Layer N (User Interface)                        |
+            |                                                                   |
+            |       +-------------------------------------------------+         |
+            |       |                        .                        |         |
+            |       |                        .                        |         |
+            |       |                        .                        |         |
+            |       |                        .                        |         |
+            |       |       +----------------------------------+      |         |
+            |       |       |           Layer 1                |      |         |
+            |       |       |      +--------------------+      |      |         |
+            |       |       |      | Layer 0 (Hardware) |      |      |         |
+            |       |       |      +--------------------+      |      |         |
+            |       |       +----------------------------------+      |         |
+            |       |                                                 |         |
+            |       +-------------------------------------------------+         |
+            |                                                                   |
+            |                                                                   |
+            |                                                                   |
+            +-------------------------------------------------------------------+
+
+        Microkernals:
+            Instead of having a big kernal with so many functionalities, in this microkernal approcah we remove all non essential components from the kernal and we implement them as system and user level program.
+            Microkernal just provide the core functionalities of the kernal and the other functionalities which are there like the device driver, the file server, process server, the virtual memory all these services are implemented as a user level or system program.
+            The main function of the microkernal is to provide a communication between the client program and these system services or user level program.
+            the communication between the client programs and the system programs, which provide the services are made through with something known as message passing.
+            If a program is executing in a user mode even if that program crashes the entire system is not going to crash, but if it is running in the kernal mode and the perticular program fails the entire system is going to crash. so, in microkernal approach as most of the functionalities will run in user mode the crashing problem of the entire system is not going happen mostly. this is the advantage of microkernal approach.
+            This also has its own disadvantages, like microkernal can suffer from performance decrease due to the increase system function overhead. Using message passing which helps in communication of the client programs and the system services there could be a system overhead, leading to a decreased performance.
+
+                    +----------------------------------------------------------------+
+                    |   +----------+      +---------+--------+---------+---------+   |
+            user    |   | client   |      | device  | file   | process | virtual |   |
+            mode    |   | program  | .....| drivers | server | server  | memory  |   |
+                    |   +----------+      +---------+--------+---------+---------+   |
+                    +----------------------------------------------------------------+
+            kernal  |                         microkernal                            |
+            mode    +----------------------------------------------------------------+
+                    |                           hardware                             |
+                    +----------------------------------------------------------------+
+        
+        Modules:
+            Modules means we follow up modular approach in the structuring if operating system and this by far best methodology for operating system design which involves using object oriented program techniques to create a modular kernal.
+            We have a core kernal and then this core kernal which have only the core functionalities of kernal and then the other functionalities are present in the form of modules which will be loaded to the kernal either at boot time or at run time. So, there are some functionalities like the device and bus drivers, scheduling classes, file system, loadable system calls, executable formats, stream module, and miscellaneous modules these modules dynamically loaded to the kernal as and when required.
+            Its look like layer and microkernal approach but its better from those two. It resembles the layered system in such a way that each kernal section has defined protected interfaces. Each of the layer has a defined protected interface which are protected from the things that we dont want them to access. But it is more flexible than a layered system, where any module can call other directly instead if one layer wants to communicate with another layer it had to go through the layer all above it. Also we are having core kernal with only the core functionalities and then the other functions are loaded into it whenever necessary. But its advantage as compared to microkernal approach is that in microkernal approach, we need to have a message passing in order to communicate between the modules, because they are implemented as system or user level programs above the kernal. But in this one they are loaded dynamically directly into the core kernal as and when needed, so they doun't need to use message passing and hence the system overhead is not there.
+
+                    +-----------------------+      +------------------------+
+                    |    Device Drivers     |      |  Miscellaneous Modules |
+                    +-----------------------+      +------------------------+
+                                        |               |
+                                        v               v
+            +------------------+     +---------------------+     +---------------------+
+            |  Bus Drivers     | --->|        Kernel       |<--- |  Scheduling Classes |
+            +------------------+     |    (Core of OS)     |     +---------------------+
+                                     |                     |
+            +-------------------+    |                     |    +---------------------+
+            | Loadable System   |--->|       Kernel        |<---|  Executable Formats |
+            | Calls             |    |    (Core of OS)     |    +---------------------+
+            +-------------------+    +---------------------+ 
+                                        ^               ^
+                                        |               |
+                    +-----------------------+     +-----------------------+
+                    |    Stream Modules     |     |    File System        |
+                    +-----------------------+     +-----------------------+
+
+    Kernal:
+        following are the main tasks of kernal:
+        1. Process Management
+            The kernel manages processes (running programs), including creating, scheduling, and terminating them.
+            It ensures that processes run efficiently and without interfering with each other.
+        2. Memory Management
+            The kernel manages system memory (RAM), allocating it to processes and ensuring they don’t overwrite each other’s data.
+            It uses techniques like virtual memory and paging to make the most efficient use of memory.
+        3. Device Management
+            The kernel controls and communicates with hardware devices like hard drives, printers, and network interfaces.
+            It uses device drivers to manage input/output (I/O) operations, ensuring the software can interact with hardware.
+        4. File System Management
+            The kernel manages the file system, which stores and organizes files on storage devices (e.g., hard drives).
+            It handles file creation, deletion, reading, and writing, and controls access to files based on permissions.
+        5. Security and Access Control
+            The kernel ensures the security of the system by enforcing user authentication and controlling permissions.
+            It prevents unauthorized access to system resources and protects against malicious activities.
+
+        Additional Important Kernel Tasks:
+        Inter-process Communication (IPC)
+            Facilitates communication between processes, allowing them to share data or synchronize their actions.
+            Examples: message passing, shared memory, and semaphores.
+        Network Management
+            The kernel manages network connections and handles network protocols (like TCP/IP).
+            Ensures data is transmitted securely and efficiently across the network.
+        Scheduling
+            The kernel determines how processes are scheduled for execution based on priority and resource availability.
+            Uses scheduling algorithms (e.g., round-robin, priority-based) to manage process execution.
+        Power Management
+            The kernel manages power consumption by controlling how the CPU and devices use power.
+            Implements sleep modes and energy-efficient tasks.
+        Kernel Communication (System Calls)
+            Provides a mechanism for user programs to request services from the kernel via system calls.
+            Example: A user process may use a system call to interact with the file system or request memory.
+
+    Unix is a multitasking, multi-user operating system that serves as the foundation for many modern operating systems, including Linux and macOS. Unix is the base for both Linux and macOS (Unix-like systems). Windows is a separate system that is not Unix-based, but has tools to run Linux apps (via WSL).
+        
+
     1. Program Execution
     2. File system management
     3. Memory management
@@ -151,7 +319,7 @@ Types of OS
         ------------------------------    AT  = arrival time
           1  |  0 |  3 |  3 |  3  |  0    BT  = burst time
           2  |  1 |  4 |  7 |  6  |  2    CT  = completion time
-          3  |  2 |  2 |  9 |  7  |  5    TAT = turn around time
+          3  |  2 |  2 |  9 |  7  |  5    TAT = turn around time  (CT - AT)
           4  |  3 |  1 | 10 |  7  |  6    WT  = waiting time
 
         Gantt Chart
@@ -605,6 +773,26 @@ Types of OS
 
         Page Table Entries (PTEs):
             A Page Table Entry includes information such as the frame number in physical memory, status bits (like whether the page is in memory), and permissions (read/write access).
+            Page Table Entries consists of:
+                1. Reference bit (Accessed bit):
+                    Indicates: Whether the page has been accessed (read or written) in last clock cycle by cpu for algorithms like least recently use.
+                    1 = Accessed, 0 = Not accessed.
+            
+                2. P/A (Physical Address):
+                    Indicates: Whether the page has been present or absent in main memory due to demand paging. 
+                    Stored as: P = present, A = absent.
+
+                3. Modified bit (Dirty bit):
+                    Indicates: Whether the page has been modified (written to).
+                    1 = Modified, 0 = Not modified.
+
+                4. Protection bits:
+                    Indicates: The access rights for the page (e.g., read/write, execute, user/kernel).
+                    Read/Write: 1 = Read/Write, 0 = Read-only.
+                    User/Supervisor: 1 = User, 0 = Supervisor (kernel).
+
+                5. Frame Number:
+                    Indicates: The physical page frame address (high-order bits in the PTE).
 
         Page Table Base Register (PTBR):
             The Page Table Base Register (PTBR) holds the starting address of the page table in memory. When the CPU generates a logical address, it uses the PTBR to locate the corresponding page table for the current process.
@@ -697,3 +885,335 @@ Types of OS
                 |                                   ^
                 |                                   |
                 +-----------------------------------+
+
+22. Demand Paging and Page Fault:
+        Demand paging is a memory management scheme where pages are loaded into main/physical memory only when they are needed (i.e., when a page fault occurs). Initially, pages of a process are not loaded into memory, and they are brought in from disk (usually from the swap space) only when the
+        A page fault occurs when a process tries to access a page that is not currently in main memory. The operating system must then handle the fault by loading the missing page into memory from disk.
+        When the CPU sends a request for a particular page and a page fault occurs, a context switch happens from the user process to the OS process. The OS process loads the page from secondary memory to main memory, and then a context switch happens from the OS process back to the user process. When the same page request is made again by the CPU, the page is now present in main memory.
+
+23. Virtual Memory:
+        "Only the required or main pages of processes are loaded into main memory for efficient use of memory, and all pages of processes are represented by P/A in page table entries with the help of the P/A bit
+
+        Process P1 Pages                Page table entries for P1               main memory
+
+        +---------+                     +-------------+------+                  +----------------+
+        |   0     |                     |Frame number | P/A  |                  |   P1(0)        |
+        |   1     |                     +-------------+------+                  |   P1(3)        |
+        |   2     |                   0 |   F1        |  p   |                  |   P1(6)        |
+        |   3     |                   1 |   -         |  A   |                  |   P1(9)        |
+        |   4     |                   2 |   -         |  A   |                  |   P1(10)       |
+        |   5     |                   3 |   F2        |  P   |                  |   P2(2)        |
+        |   6     |                   4 |   -         |  A   |                  |   P2(7)        |
+        |   7     |                   5 |   -         |  A   |                  |   P5(4)        |
+        |   8     |                   6 |   F3        |  P   |                  |   P5(7)        |
+        |   9     |                   7 |   -         |  A   |                  |   P5(9)        |
+        |  10     |                   8 |   -         |  A   |                  +----------------+
+        +---------+                   9 |   F4        |  P   |
+                                     10 |   F5        |  P   |
+                                        +-------------+------+
+    
+    1. Frame Allocation:
+            The process in which pages of a process are assigned frames in main memory, ranging from a minimum number of frames (the number of pages required to execute one instruction of a process) to a maximum number of frames (the total number of pages of the entire process).
+
+            Frames allocation techniques:
+                1. Equal Allocation: 
+                    Allocates an equal number of frames to each process. e.g. P1 = 20 pages, P2 = 500 pages, P3 = 200 pages, main memory frames = 60, then 60 / 3 = 20 frames each for every process.
+                2. Weighted Allocation: 
+                    Allocates frames based on process with how many number of pages it has (weight). e.g. P1 = 30 pages, P2 = 30 pages, P3 = 40 pages, main memory frames = 10, total pages = (P1)30 + (P2)30 + (P3)40 = 100, then P1 gets (30 / 100) * 10 = 3 frames, P2 gets (30 / 100) * 10 = 3 frames, P3 gets (40 / 100) * 10 = 4 frames
+                3. Dynamic Allocation: 
+                    Allocates frames based on process priority (replaces pages of process with leaset priority with pages of process with high priority)
+
+    2. Page Replacement:
+            The process of replacing existing pages of a particular process to load the required pages for execution, ensuring optimal use of virtual memory.
+
+            Page Replacement Algorithms:
+                1. FIFO (First-In, First-Out)
+                    FIFO replaces the oldest page in memory. The page that was loaded first will be replaced when a new page needs to be loaded into memory.
+
+                    Reference String: 4, 7, 6, 1, 7, 6, 1, 2, 7, 2
+                    Frames in memory: [ - , - , - ]  (Initial state)
+
+                    Step 1: Reference 4 → Load 4 into frame 1 → [ 4, - , - ]
+                    Step 2: Reference 7 → Load 7 into frame 2 → [ 4, 7, - ]
+                    Step 3: Reference 6 → Load 6 into frame 3 → [ 4, 7, 6 ]
+                    Step 4: Reference 1 → Replace 4 (oldest) with 1 → [ 1, 7, 6 ]
+                    Step 5: Reference 7 → 7 is already in memory → [ 1, 7, 6 ]
+                    Step 6: Reference 6 → 6 is already in memory → [ 1, 7, 6 ]
+                    Step 7: Reference 1 → 1 is already in memory → [ 1, 7, 6 ]
+                    Step 8: Reference 2 → Replace 7 (oldest) with 2 → [ 1, 2, 6 ]
+                    Step 9: Reference 7 → Replace 6 (oldest) with 7 → [ 1, 2, 7 ]
+                    Step 10: Reference 2 → 2 is already in memory → [ 1, 2, 7 ]
+
+                    queue = [4, 7, 6, 1, 2, 7]
+
+                    **Page Faults**: 6 page faults  
+                    **Final Frame Content**: [ 1, 2, 7 ]
+
+                2. LRU (Least Recently Used)
+                    In LRU, we replace the page that has not been used for the longest time. The page replacement decision is based on the order of recent accesses.
+
+                    Reference String: 4, 7, 6, 1, 7, 6, 1, 2, 7, 2
+                    Frames in memory: [ - , - , - ]  (Initial state)
+
+                    Step 1: Reference 4 → Load 4 into frame 1 → [ 4, - , - ]
+                    Step 2: Reference 7 → Load 7 into frame 2 → [ 4, 7, - ]
+                    Step 3: Reference 6 → Load 6 into frame 3 → [ 4, 7, 6 ]
+                    Step 4: Reference 1 → Replace 4 (least recently used) with 1 → [ 1, 7, 6 ]
+                    Step 5: Reference 7 → 7 is already in memory → [ 1, 7, 6 ]
+                    Step 6: Reference 6 → 6 is already in memory → [ 1, 7, 6 ]
+                    Step 7: Reference 1 → 1 is already in memory → [ 1, 7, 6 ]
+                    Step 8: Reference 2 → Replace 7 (least recently used) with 2 → [ 1, 2, 6 ]
+                    Step 9: Reference 7 → Replace 6 (least recently used) with 7 → [ 1, 2, 7 ]
+                    Step 10: Reference 2 → 2 is already in memory → [ 1, 2, 7 ]
+
+                    **Page Faults**: 6  
+                    **Final Frame Content**: [ 1, 2, 7 ]
+                
+                3. Optimal Page Replacement
+                    In the Optimal algorithm, the page that will not be used for the longest period in the future is replaced. This is the ideal strategy, but in practice, it's impossible to implement because it requires knowledge of future references.
+
+                    Reference String: 4, 7, 6, 1, 7, 6, 1, 2, 7, 2
+                    Frames in memory: [ - , - , - ]  (Initial state)
+
+                    Step 1: Reference 4 → Load 4 into frame 1 → [ 4, - , - ]
+                    Step 2: Reference 7 → Load 7 into frame 2 → [ 4, 7, - ]
+                    Step 3: Reference 6 → Load 6 into frame 3 → [ 4, 7, 6 ]
+                    Step 4: Reference 1 → Replace 4 (will not be used for the longest time) with 1 → [ 1, 7, 6 ]
+                    Step 5: Reference 7 → 7 is already in memory → [ 1, 7, 6 ]
+                    Step 6: Reference 6 → 6 is already in memory → [ 1, 7, 6 ]
+                    Step 7: Reference 1 → 1 is already in memory → [ 1, 7, 6 ]
+                    Step 8: Reference 2 → Replace 1 (will not be used for the longest time) with 2 → [ 2, 7, 6 ]
+                    Step 9: Reference 7 → 7 is already in memory → → [ 2, 7, 6 ]
+                    Step 10: Reference 2 → 2 is already in memory → [ 2, 7, 6 ]
+
+                    **Page Faults**: 5  
+                    **Final Frame Content**: [ 2, 7, 6 ]
+
+24. Segementation (same like pagination, close to user understanding):
+        Logical Address: The address generated by the CPU during execution, consisting of a segment number and an offset.
+        Physical Address: address in main memory with base and offset less than limit
+        Segment Table (SGT): A data structure that maps logical segment numbers to their corresponding physical addresses in memory.
+        Segment Table Base Register (SGTB): Holds the starting address of the segment table in physical memory.
+        Base: The starting address of a segment in physical memory.
+        Limit: The size of the segment, which defines the valid range of the offset.
+        Offset: A value indicating a specific location within a segment.
+
+                       (base, offset)
+           +---------+        |     +-----------------+           +-----------------+
+           |  CPU    |        |      | Seg. Table Base |           |  Main Memory    |
+           | Logical | --(LA)------> | Register (STBR) |           +-----------------+
+           | Address |               +-----------------+           |     OS          |
+           +---------+                              |     base +---+-----------------+
+                                                    |    limit |                     |
+          +----------------------------------+      |          +---------------------+
+          |             Seg. Table           |      |          |                     | <------+
+          +----------------------------------+      |          +---------------------+        |
+          |  Base      |  Limit              |      |          |                     |        |
+          +------------+---------------------+ <----+          +---------------------+        |
+        0 |     0      |      3              |                 |                     |        |
+        1 |     1      |      4              |                 +---------------------+        |                       |
+        2 |     2      |      2              | ------------(PA)-------------------------------+                                      
+          +----------------------------------+
+
+25. Priority Inheritance:
+        If a low-priority process enters the critical section and, at the same time, a high-priority process arrives and also wants to enter the critical section, mutual exclusion ensures that only one process can be in the critical section at a time. To prevent the low-priority process from blocking the high-priority process (leading to a potential priority inversion), the low-priority process inherits the priority of the high-priority process.
+        As a result, the low-priority process continues to execute in the critical section until it completes. Once the low-priority process exits the critical section, it reverts back to its original low priority, and then the high-priority process can enter the critical section.
+        This mechanism of priority inheritance is a solution to priority inversion, where a higher-priority process is indirectly blocked by a lower-priority one, potentially causing delays in the system.
+        If preemption occurs on P1, such that the CPU is allocated to the high-priority process (P2) while the low-priority process (P1) is still in the critical section, a deadlock or spinlock situation can arise. In this case, P1 has already entered the critical section but needs the CPU to continue execution, while P2 has the CPU but cannot enter the critical section due to mutual exclusion constraints. This leads to a deadlock or spinlock, where neither process can proceed—P1 is blocked from continuing, and P2 is blocked from entering the critical section.
+        Priority inheritance helps avoid this scenario by ensuring that P1 temporarily inherits the priority of P2, allowing P1 to complete its critical section and release the CPU, thereby preventing deadlock or spinlock.
+
+                    P2 (high priority)
+
+        +----------+
+        | entry    |
+        +----------+
+
+        CS (P1 with low priority)
+                (P1 inherits P2 priority and becomes high priority process)
+
+        +----------+
+        | exit     |
+        +----------+
+                (P1 again come back to previous low priority)
+
+26. Inter Process Communication (IPC):
+        Independent Processes: These processes do not need to communicate with other processes. They run independently and do not share data.
+        Cooperative Processes: These processes need to communicate or synchronize with each other to accomplish a task. They share data or coordinate their actions.
+
+        Inter-Process Communication (IPC)
+        IPC allows processes to exchange data or synchronize their actions. The two main models of IPC are:
+
+        1. Shared Memory:
+            two process share a memory one process write data in that shared memory and one will read that data to communicate. 
+
+            +------+
+            | P1   |--write--+
+            +------+         |
+            |shared| <-------+
+            |memory| --------+
+            +------+         |
+            | P2   | <--read-+
+            +------+
+        2. Message passing:
+            one process send message to kernal and kernal send that message to perticular recever process and that process receives that message which is how communication happens
+
+            +------+
+            | P1   |--send------+
+            +------+            |
+            |P2    |<-receive-+ |
+            +------+          | |
+            |      | ---------+ |
+            |Kernal| <----------+
+            +------+
+
+27. Semaphores:
+        A semaphore is an integer variable used to manage access to shared resources in concurrent processes. It was introduced by Edsger Dijkstra in 1965 as a synchronization tool to handle mutual exclusion and synchronization between processes.
+
+        Semaphores are used to control access to critical sections (shared resources) in a way that prevents race conditions and ensures that processes run in an orderly fashion.
+
+        Types of Semaphores
+            1. Binary Semaphore (also called a Mutex Semaphore)
+                A binary semaphore can only take two values: 0 or 1. It is used to ensure mutual exclusion in critical sections, where only one process can execute in the critical section at a time.
+
+                Operations:
+                P(s) / wait / down: This operation checks if the semaphore value is 0 (indicating that the resource is unavailable). If it is, the process is blocked (suspended) until the value becomes 1. If the value is 1, it is decremented to 0 (indicating the resource is now locked).
+                V(s) / signal / up: This operation increments the semaphore value, releasing the resource. If any process was blocked on the semaphore, it is now allowed to proceed.
+
+                P(semaphore s) {
+                    while (s == 0);   // If semaphore is 0, block the process
+                    s = s - 1;        // Otherwise, decrement semaphore to 0 (enter critical section)
+                }
+
+                V(semaphore s) {
+                    s = s + 1;        // Increment semaphore to 1 (exit critical section, allow another process)
+                }
+
+            P1:
+                P(s);           // Enter critical section (decrement semaphore to 0)
+                // Critical section code here
+                V(s);           // Exit critical section (increment semaphore to 1)
+
+            P2:
+                P(s);           // Wait for P(s) to be 1 and enter critical section
+                // Critical section code here
+                V(s);           // Exit critical section
+
+
+
+            2. Counting Semaphore
+               A counting semaphore is used when the resource being managed has multiple instances, and the semaphore maintains a count of available resources. The semaphore value can range from 0 to any positive integer. The processes are blocked if the semaphore count is 0 (i.e., no resources are available).
+
+                Operations:
+
+                P(s) / wait / down: If the semaphore value is greater than 0, it is decremented. If the semaphore value is 0, the process is added to the block list (i.e., the process is suspended until resources are available).
+                V(s) / signal / up: The semaphore value is incremented. If there are any processes waiting in the block list, one of them is moved to the ready queue, allowing it to continue execution.
+
+                P(semaphore s) {
+                    while (s == 0);   // If semaphore is 0, block the process
+                    s = s - 1;        // Otherwise, decrement semaphore (access resource)
+                }
+
+                V(semaphore s) {
+                    s = s + 1;        // Increment semaphore (release resource)
+                    // If any processes are waiting, wake one up
+                }
+
+
+                Semaphore s = 3;  // 3 printers available
+
+            P1:
+                P(s);         // Decrement semaphore (use a printer)
+                // Use printer (critical section code)
+                V(s);         // Increment semaphore (release printer)
+
+            P2:
+                P(s);         // Decrement semaphore (use another printer)
+                // Use printer (critical section code)
+                V(s);         // Increment semaphore (release printer)
+
+            P3:
+                P(s);         // Decrement semaphore (use another printer)
+                // Use printer (critical section code)
+                V(s);         // Increment semaphore (release printer)
+
+28. Message Queues
+
+        Message queues in an OS are stored in the kernel in the form of a linked list.
+        Message queues do not strictly follow FIFO (First In, First Out) order.
+        A message consists of data and a type, where the type is represented as an integer value.
+        Message queues are used for inter-process communication (IPC).
+        System calls related to message queues:
+            `msgget()`: Creates a new queue or opens an existing queue.
+            `msgsnd()`: Writes data to the message queue.
+            `msgrcv()`: Reads data from the message queue.
+            `msgctl()`: Performs control operations on the message queue.
+
+29. Pipes:
+        Pipe communication between processes:
+
+        P0 (write) → pipe → P1 (read)
+        Used for communication between parent and child processes.
+        Follows FIFO (First In, First Out) order.
+        You can perform a write of 512 bytes at a time in a pipe and read 1 byte at a time from the pipe.
+        
+        System call to create a pipe:
+        int pipe(int fds[2]); //This creates two file descriptors: fds[0] (read) and fds[1] (write).
+        Return 0 on success (pipe successfully created).
+        Return -1 on failure (use perror() to determine the cause of failure).
+
+        System calls:
+        write(fd[1], ...) to write into the pipe.
+            Returns the number of bytes written or -1 on failure (use perror() to determine the reason for failure).
+        read(fd[0], ...) to read from the pipe.
+            Returns the number of bytes read or -1 on failure (use perror() to determine the reason for failure).
+
+        To establish two-way communication between parent and child, you can use two pipes:
+                              +----+
+                       +----->|pipe|------+
+            +------+   |      +----+      |    +-----+
+            |parent| --+                  +--> |child|
+            +------+ <--+                 +--  +-----+
+                        |      +----+     |
+                        +------|read|<----+
+                               +----+
+
+30. interrupts:
+        An interrupt is a mechanism that temporarily halts the execution of the current process to give attention to a higher-priority task, and then resumes the original process after the task is handled.
+
+        Types of interrupts:
+            1. Internal Interrupt: Triggered by events within the CPU, such as a division by zero or invalid memory access.
+            2. External Interrupt: Triggered by external devices, such as hardware interrupts from peripherals (e.g., keyboard, mouse, or timer).
+            3. Software Interrupt: Triggered by software instructions, like system calls or exceptions. Example: INT instruction in x86 assembly.
+
+        At the atomic level, system execution refers to the execution of individual instructions.
+        Interrupts are checked after completing the execution of one interrupt. Interrupts cannot be checked while an interrupt is being executed.
+
+        Interrupt Flag (IF):
+            The Interrupt Flag (IF) is used to check whether interrupts are enabled or not.
+        
+        Interrupt Service Routine (ISR):
+            Before entering the ISR, the CPU saves the current status (CPU registers or the current process's PCB) to preserve the execution context.
+            The last instruction of the ISR is typically a return from interrupt (e.g., IRET or RTI instruction), which restores the CPU's state and resumes execution of the interrupted process.
+
+        Interrupt Vector Table (IVT):
+            The first instruction of the ISR is located by referring to the Interrupt Vector Table (IVT), which contains memory addresses of ISRs for different interrupts. The IVT is indexed by the interrupt number.
+        
+        After the ISR completes, the system loads the next instruction of the interrupted program and continues the execution of the process.
+
+31. Enabling and Disabling Interrupts:
+        Interrupts can be enabled or disabled by setting or clearing specific bits in the Interrupt Enable (IE) register (by setting 1/0)
+
+        IE Register (Interrupt Enable Register): 8 bit register which controls interrupts are enabled and disabled in the system.
+
+        EA (Bit 7): Global Interrupt (1 = enable all interrupts, 0 = disable all interrupts)
+        EX1 (Bit 0): External Interrupt 1 
+        EX0 (Bit 2): External Interrupt 0 
+        ET1 (Bit 1): Timer 1 Overflow Interrupt 
+        ET0 (Bit 3): Timer 0 Overflow Interrupt 
+        ES (Bit 4): Serial Port Interrupt 
+        Reserved (Bits 5, 6): Reserved for future use
+
+        +-----+-----+-----+-----+-----+-----+-----+-----+
+        | EA  |  -  |  -  | ES  | ET1 | EX1 | ET0 | EX0 |
+        +-----+-----+-----+-----+-----+-----+-----+-----+
+           7     6     5     4     3     2     1     0
