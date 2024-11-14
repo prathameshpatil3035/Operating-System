@@ -165,7 +165,7 @@ OS  (user -> OS -> HardWare)
             Provides a mechanism for user programs to request services from the kernel via system calls.
             Example: A user process may use a system call to interact with the file system or request memory.
 
-    Unix is a multitasking, multi-user operating system that serves as the foundation for many modern operating systems, including Linux and macOS. Unix is the base for both Linux and macOS (Unix-like systems). Windows is a separate system that is not Unix-based, but has tools to run Linux apps (via WSL).
+    Unix is a multitasking, multi-user operating system that serves as the foundation for many modern operating systems, including Linux and macOS. Unix is the base for both Linux and macOS (Unix-like systems). Windows is a separate system that is not Unix-based, but has tools to run Linux apps (via WSL). Ubuntu is part of the Linux family and is a Unix-like system.
         
 
     1. Program Execution
