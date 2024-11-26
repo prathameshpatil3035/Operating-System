@@ -2,12 +2,14 @@ OS  (user -> OS -> HardWare)
 
     two modes of operations in which a program can execute : 
     1. user mode 
-        if the program is executing in a user mode then that program does not have direct access to the memory, to the hardware and such resources.
-        when a program executing in a kernal mode and if that program happens to crash during its execution then the entire system would not crash.
+        If a program is executing in user mode, it does not have direct access to system resources such as memory, hardware, or privileged instructions.
+        Instead, the program must request access to these resources through system calls that the operating system manages.
+        A crash in a program executing in user mode does not affect the entire system to crash, as the program operates within its isolated environment. The crash is restricted to that program and does not compromise the operating system's stability.   
 
     2. kernal mode (privileged mode)
-        if the program is executing in a user mode then that program does have direct access to the memory, to the hardware and such resources.
-        when a program executing in a kernal mode and if that program happens to crash during its execution then the entire system would crash, so that is the problem of kernal mode.
+        If a program is executing in kernel mode, it has direct access to system resources such as memory, hardware, and privileged CPU instructions.
+        Programs in this mode can execute critical tasks, like managing device drivers, performing I/O operations, or controlling system memory.
+        If a program executing in kernel mode crashes, it can cause the entire system to crash because the program operates with unrestricted access to all system resources. This makes stability in kernel mode operations critical.
 
     In an operating system, transitioning from user mode to kernel mode occurs when a process needs to access privileged resources such as hardware (e.g., memory, monitor, hard disk) that are protected from direct user access. This transition typically happens through a system call.
     The process of switching between user mode and kernel mode is called a context switch or mode switch
