@@ -15,7 +15,7 @@ OS  (user -> OS -> HardWare)
     The process of switching between user mode and kernel mode is called a context switch or mode switch
 
     System call :
-        System call provide an interface to the service made available by an operating system
+        System call provide an interface(between user mode to kernal mode) to the service made available by an operating system. System call is a way of communication through which user mode can interact with kernal mode.
         System call is a programmatic way in which a computer program requests a service  from the kernal of the operating system, these calls are generally available as routines written n C and C++
     
     Structure of Operating System:
