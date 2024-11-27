@@ -16,10 +16,10 @@ OS  (user -> OS -> HardWare)
 
     System call :
         System call provide an interface(between user mode to kernal mode) to the service made available by an operating system. System call is a way of communication through which user mode can interact with kernal mode.
-        System call is a programmatic way in which a computer program requests a service  from the kernal of the operating system, these calls are generally available as routines written n C and C++
+        System call is a programmatic way in which a computer program requests a service  from the kernal of the operating system, these calls are generally available as routines written in C and C++
     
     Structure of Operating System:
-        MSDOD structure (Microsoft disk operating system):
+        MSDOS structure (Microsoft disk operating system):
             msdos written on the intel 8088 and this intel 8088 does not provide dual mode or any hardware protection.
             It looks like layered structure but all the layers has direct access to hardware. so if program using hardware fails then the entire system will crash. 
 
